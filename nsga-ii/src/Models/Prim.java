@@ -1,31 +1,32 @@
 package Models;
 
-import Utilities.ImageReader;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.*;
 
 public class Prim {
 
-    private ArrayList<Vertex> graph;
-    private final Random random = new Random();
+    private ArrayList<Vertex> vertices;
+    private ArrayList<Edge> edges;
+    private final Random random;
 
-    public Prim(int[][][] imgRGB) {
-        initGraph(imgRGB);
+    public Prim(Vertex[][] vertices) {
+        this.vertices = new ArrayList<>();
+        this.edges = new ArrayList<>();
+        this.random = new Random();
+        initGraph(vertices);
     }
 
     public List<Edge> createMinimumSpanningTree() {
-        Set<Vertex> unvisited = new HashSet<>(graph);
+        Set<Vertex> unvisited = new HashSet<>(vertices);
 
-        Vertex start = graph.get(random.nextInt(graph.size()));
+        Vertex start = this.vertices.get(random.nextInt(this.vertices.size()));
         unvisited.remove(start);
 
         List<Edge> path = new ArrayList<>();
-        Queue<Edge> pq = new PriorityQueue<>();
+        PriorityQueue<Edge> pq = new PriorityQueue<>();
 
         Vertex current = start;
         while (!unvisited.isEmpty()) {
+
             for (Edge e : current.getEdges()) {
                 if (unvisited.contains(e.getTo())) {
                     pq.add(e);
@@ -33,38 +34,45 @@ public class Prim {
             }
 
             Edge nextEdge = pq.remove();
+
+            while (!unvisited.contains(nextEdge.getTo())) {
+                nextEdge = pq.remove();
+            }
+
             path.add(nextEdge);
 
             current = nextEdge.getTo();
             unvisited.remove(current);
         }
 
+        Collections.sort(path);
         return path;
     }
 
-    private boolean isDisconnected() {
-        for (Vertex vertex : graph) {
-            if (!vertex.isVisited()) {
-                return true;
-            }
-        }
-        return false;
-    }
+    public void initGraph(Vertex[][] initVertices) {
+        int height = initVertices.length;
+        int width = initVertices[0].length;
 
-    public void initGraph(int[][][] imgRGB) {
-        int height = imgRGB.length;
-        int width = imgRGB[0].length;
+        for (Vertex[] verticesArr : initVertices) {
+            this.vertices.addAll(Arrays.asList(verticesArr));
+        }
 
         for (int y = 0; y < height; y++) {
-            for (int x = 0; x < height; x++) {
-                
+            for (int x = 0; x < width; x++) {
+
+                Vertex from = initVertices[y][x];
+
+                for (Direction d : Direction.values()) {
+
+                    if (0 <= x + d.getShiftX() && x + d.getShiftX() < width
+                            && 0 <= y + d.getShiftY() && y + d.getShiftY() < height) {
+
+                        Vertex to = initVertices[y + d.getShiftY()][x + d.getShiftX()];
+
+                        this.edges.add(new Edge(from, to, d));
+                    }
+                }
             }
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        BufferedImage image = ImageReader.readImage();
-        int[][][] imgRGB = ImageReader.get2DImage(image);
-
     }
 }

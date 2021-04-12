@@ -9,12 +9,17 @@ public class Edge implements Comparable<Edge>{
     private final double weight;
     private final Vertex from;
     private final Vertex to;
+    private final Direction direction;
     private boolean included = false;
 
-    public Edge(Vertex from, Vertex to) {
+    public Edge(Vertex from, Vertex to, Direction d) {
         this.from = from;
         this.to = to;
+        this.direction = d;
         this.weight = Utils.getEuclideanDist(from.getRgb(), to.getRgb());
+
+        from.addEdge(this);
+        to.addEdge(this);
     }
 
     public Vertex getFrom() {
@@ -23,6 +28,10 @@ public class Edge implements Comparable<Edge>{
 
     public Vertex getTo() {
         return to;
+    }
+
+    public int getDirection() {
+        return direction.getDirection();
     }
 
     public double getWeight() {
@@ -45,11 +54,5 @@ public class Edge implements Comparable<Edge>{
             return -1;
         }
         return 0;
-    }
-
-    public static void main(String[] args) {
-
-
-
     }
 }

@@ -1,5 +1,7 @@
 package Utilities;
 
+import Models.Vertex;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -15,34 +17,11 @@ public class ImageReader {
         return img;
     }
 
-    public static int[][] getFlattenedImage(BufferedImage img) {
+    public static Vertex[][] getImageAsGraph(BufferedImage img) {
         int width = img.getWidth();
         int height = img.getHeight();
 
-        int[][] flattenedImageInt = new int[width*height][3];
-
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-
-                int pixel = img.getRGB(x, y);
-                int r = (pixel >> 16) & 0x000000FF;
-                int g = (pixel >> 8) & 0x000000FF;
-                int b = (pixel) & 0x000000FF;
-
-                flattenedImageInt[x + y * width][0] = r;
-                flattenedImageInt[x + y * width][1] = g;
-                flattenedImageInt[x + y * width][2] = b;
-            }
-        }
-
-        return flattenedImageInt;
-    }
-
-    public static int[][][] get2DImage(BufferedImage img) {
-        int width = img.getWidth();
-        int height = img.getHeight();
-
-        int[][][] image2D = new int[height][width][3];
+        Vertex[][] vertices = new Vertex[height][width];
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -52,30 +31,20 @@ public class ImageReader {
                 int g = (pixel >> 8) & 0x000000FF;
                 int b = (pixel) & 0x000000FF;
 
-                image2D[y][x][0] = r;
-                image2D[y][x][1] = g;
-                image2D[y][x][2] = b;
+                vertices[y][x] = new Vertex(x, y, new int[]{r, g, b});
             }
         }
 
-        return image2D;
-    }
-
-
-
-    public static void saveImage(BufferedImage img, String filename) throws IOException {
-        File f = new File(filename);
-        ImageIO.write(img, "jpg", f);
-        System.out.println("Image saved.");
+        return vertices;
     }
 
     public static void main(String[] args) throws IOException {
 
         BufferedImage image = readImage();
 
-        int[][][] image2D = get2DImage(image);
+        Vertex[][] graph = getImageAsGraph(image);
 
-        for (int[][] ls : image2D) {
+        for (Vertex[] ls : graph) {
             System.out.println(Arrays.deepToString(ls));
         }
 
