@@ -2,8 +2,6 @@ package Models;
 
 import Utilities.Utils;
 
-import java.util.*;
-
 public class Edge implements Comparable<Edge>{
 
     private final double weight;
@@ -30,8 +28,8 @@ public class Edge implements Comparable<Edge>{
         return to;
     }
 
-    public int getDirection() {
-        return direction.getDirection();
+    public Direction getDirection() {
+        return direction;
     }
 
     public double getWeight() {
@@ -54,5 +52,11 @@ public class Edge implements Comparable<Edge>{
             return -1;
         }
         return 0;
+    }
+
+    @Override
+    public String toString() {
+
+        return String.format("(%d, %d) -> (%d, %d): %f", from.getX() + 1, from.getY() + 1, to.getX() + 1, to.getY() + 1, weight);
     }
 }

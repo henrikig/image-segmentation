@@ -45,7 +45,6 @@ public class Prim {
             unvisited.remove(current);
         }
 
-        Collections.sort(path);
         return path;
     }
 

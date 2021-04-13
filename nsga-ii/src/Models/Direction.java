@@ -31,4 +31,45 @@ public enum Direction {
     public int getShiftY() {
         return yShift;
     }
+
+    public static Direction getDirection(int direction) {
+        for (Direction d : Direction.values()) {
+            if (d.getDirection() == direction) {
+                return d;
+            }
+        }
+        return null;
+    }
+
+    public Direction getOpposite() {
+        switch(this) {
+            case E -> {
+                return W;
+            }
+            case W -> {
+                return E;
+            }
+            case N -> {
+                return S;
+            }
+            case S -> {
+                return N;
+            }
+            case NE -> {
+                return SW;
+            }
+            case SE -> {
+                return NW;
+            }
+            case NW -> {
+                return SE;
+            }
+            case SW -> {
+                return NE;
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
 }

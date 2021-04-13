@@ -7,8 +7,9 @@ public class Vertex {
     private final int x;
     private final int y;
     private final int[] rgb;
-    private boolean visited = false;
     private ArrayList<Edge> edges;
+    private int segment = 0;
+    private boolean isEdge = false;
 
     public Vertex(int x, int y, int[] rgb) {
         this.x = x;
@@ -29,10 +30,6 @@ public class Vertex {
         return rgb;
     }
 
-    public boolean isVisited() {
-        return visited;
-    }
-
     public ArrayList<Edge> getEdges() {
         return edges;
     }
@@ -41,7 +38,19 @@ public class Vertex {
         edges.add(e);
     }
 
-    public void setVisited() {
-        visited = true;
+    public int getSegment() {
+        return segment;
+    }
+
+    public void setSegment(int segment) {
+        this.segment = segment;
+    }
+
+    public boolean isEdge() {
+        return isEdge;
+    }
+
+    public void setEdge(boolean edge) {
+        isEdge = edge;
     }
 }

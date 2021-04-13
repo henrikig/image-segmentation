@@ -1,11 +1,13 @@
 package Models;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 public class Chromosome {
 
-    private final int[][] genotype;
+    private int[][] genotype;
     private List<Edge> path = null;
     private final int height;
     private final int width;
@@ -14,12 +16,11 @@ public class Chromosome {
 
     public Chromosome(List<Edge> path, int height, int width, int segments) {
         this.genotype = new int[height][width];
-        this.path = path;
         this.height = height;
         this.width = width;
         this.segments = segments;
 
-        initGenotype();
+        initGenotype(path);
     }
 
     public Chromosome(Chromosome c1, Chromosome c2) {
@@ -29,6 +30,10 @@ public class Chromosome {
         this.random = new Random();
 
         crossover(c1, c2);
+    }
+
+    public int[][] getGenotype() {
+        return genotype;
     }
 
     public int getHeight() {
@@ -56,13 +61,26 @@ public class Chromosome {
         return genotype[y][x];
     }
 
-    private void initGenotype() {
-        for (int i = 1; i <= segments; i++) {
-            path.remove(path.size() - 1);
-        }
+    private void initGenotype(List<Edge> path) {
 
         for (Edge e : path) {
-            genotype[e.getFrom().getY()][e.getFrom().getX()] = e.getDirection();
+            if (genotype[e.getFrom().getY()][e.getFrom().getX()] == 0) {
+
+                genotype[e.getFrom().getY()][e.getFrom().getX()] = e.getDirection().getDirection();
+            } else {
+
+                genotype[e.getTo().getY()][e.getTo().getX()] = e.getDirection().getOpposite().getDirection();
+            }
+        }
+
+        // Create a priority queue with the longest edges first
+        PriorityQueue<Edge> pq = new PriorityQueue<>(Collections.reverseOrder());
+        pq.addAll(path);
+
+        // Remove the k longest edges
+        for (int i = 0; i < 1; i++) {
+            Edge e = pq.remove();
+            genotype[e.getFrom().getY()][e.getFrom().getX()] = 0;
         }
     }
 
