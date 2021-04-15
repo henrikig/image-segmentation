@@ -1,6 +1,8 @@
 package Utilities;
 
 import Models.Chromosome;
+import Models.Segments;
+import Models.Vertex;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -10,12 +12,20 @@ import java.io.IOException;
 
 public class ImageWriter {
 
-    public static void writeBWImage(Chromosome solution) throws IOException {
-        File sol_f = new File(Parameters.COLOR_SOLUTION + solution.getSegments() + ".jpg");
-        File eval_f = new File(Parameters.EVALUATED_SOLUTION + solution.getSegments() + ".jpg");
+    public static void writeBWImage(Segments segments, Vertex[][] vertexGrid) throws IOException {
+        File solutionFile = new File(Parameters.COLOR_SOLUTION + segments.getNumSegments() + ".jpg");
+        File evaluationFile = new File(Parameters.EVALUATED_SOLUTION + segments.getNumSegments() + ".jpg");
 
-        int width = solution.getWidth();
-        int height = solution.getHeight();
+        int width = segments.getWidth();
+        int height = segments.getHeight();
+
+        Vertex[][] solution = new Vertex[height][width];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                solution[y][x] = new Vertex(vertexGrid[y][x], segments.getSegments());
+            }
+        }
 
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
@@ -24,17 +34,16 @@ public class ImageWriter {
         graphics.setPaint(Color.WHITE);
         graphics.fillRect(0,0, width, height);
 
-        //TODO: Draw actual segments
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (solution.getDirection(x,y) == 3) {
+                if (solution[y][x].getIsEdge()) {
                     img.setRGB(x, y, Color.BLACK.getRGB());
                 }
             }
         }
 
-        ImageIO.write(img, "jpg", sol_f);
-        ImageIO.write(img, "jpg", eval_f);
+        ImageIO.write(img, "jpg", solutionFile);
+        ImageIO.write(img, "jpg", evaluationFile);
         System.out.println("Image saved.");
     }
 

@@ -18,6 +18,16 @@ public class Vertex {
         this.edges = new ArrayList<>();
     }
 
+    public Vertex(Vertex v, int[][] segments) {
+        this.x = v.getX();
+        this.y = v.getY();
+        this.rgb = v.getRgb();
+        this.segment = segments[y][x];
+
+        this.isEdge = isEdge(x, y, segments);
+
+    }
+
     public int getX() {
         return x;
     }
@@ -46,11 +56,30 @@ public class Vertex {
         this.segment = segment;
     }
 
-    public boolean isEdge() {
+    public boolean getIsEdge() {
         return isEdge;
     }
 
     public void setEdge(boolean edge) {
         isEdge = edge;
+    }
+
+    private boolean isEdge(int x, int y, int[][] segments) {
+
+        for (Direction d : Direction.values()) {
+
+            int neighborX = x + d.getShiftX();
+            int neighborY = y + d.getShiftY();
+
+            if (0 <= neighborX && neighborX < segments[0].length
+                    && 0 <= neighborY && neighborY < segments.length) {
+
+                if (segment != segments[neighborY][neighborX]) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

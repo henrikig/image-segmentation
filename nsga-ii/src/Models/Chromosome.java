@@ -65,10 +65,8 @@ public class Chromosome {
 
         for (Edge e : path) {
             if (genotype[e.getFrom().getY()][e.getFrom().getX()] == 0) {
-
                 genotype[e.getFrom().getY()][e.getFrom().getX()] = e.getDirection().getDirection();
             } else {
-
                 genotype[e.getTo().getY()][e.getTo().getX()] = e.getDirection().getOpposite().getDirection();
             }
         }
@@ -78,7 +76,7 @@ public class Chromosome {
         pq.addAll(path);
 
         // Remove the k longest edges
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < segments - 1; i++) {
             Edge e = pq.remove();
             genotype[e.getFrom().getY()][e.getFrom().getX()] = 0;
         }

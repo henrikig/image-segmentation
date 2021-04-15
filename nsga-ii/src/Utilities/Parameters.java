@@ -4,7 +4,8 @@ public class Parameters {
 
     public final static String P1 = "86016";
     public final static String P2 = "custom";
-    public final static String CURRENT_IMAGE = P2;
+    public final static String P3 = "c2";
+    public final static String CURRENT_IMAGE = P3;
     public final static String TEST_IMAGE = "./training_images/" + CURRENT_IMAGE + "/Test image.jpg";
     public final static String EVALUATED_SOLUTION = "../evaluator/Student_Segmentation_Files/" + CURRENT_IMAGE + "-";
     public final static String COLOR_SOLUTION = "./solution_images/" + CURRENT_IMAGE + "-COLOR-";
