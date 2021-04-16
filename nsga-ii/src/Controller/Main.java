@@ -26,7 +26,7 @@ public class Main {
         List<Edge> path2 = prim.createMinimumSpanningTree();
 
         Chromosome c1 = new Chromosome(path1, image.getHeight(), image.getWidth(), 3);
-        Chromosome c2 = new Chromosome(path2, image.getHeight(), image.getWidth(), 3);
+        Chromosome c2 = new Chromosome(path2, image.getHeight(), image.getWidth(), 10);
         Chromosome c3 = new Chromosome(c1, c2);
 
 
@@ -42,6 +42,10 @@ public class Main {
             System.out.println(Arrays.toString(seg));
         }
 
-        ImageWriter.writeBWImage(s, initVertices);
+        c1.calculateObjectives(initVertices);
+        c2.calculateObjectives(initVertices);
+        c3.calculateObjectives(initVertices);
+
+        ImageWriter.writeBWImage(c1, initVertices);
     }
 }

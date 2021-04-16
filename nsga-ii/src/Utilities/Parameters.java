@@ -14,8 +14,8 @@ public class Parameters {
     public final static int MIN_SEGMENTS = 10;
     public final static int MAX_SEGMENTS = 50;
 
-    public final static int POPULATION_SIZE = 50;
-    public final static int GENERATIONS = 100;
+    public final static int POPULATION_SIZE = 5;
+    public final static int GENERATIONS = 5;
     public final static double MUTATION_PROB = 0.2;
     public final static double XOVER_PROB = 0.7;
 }

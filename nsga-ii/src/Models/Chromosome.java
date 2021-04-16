@@ -1,24 +1,31 @@
 package Models;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Random;
+import Utilities.Utils;
 
-public class Chromosome {
+import java.util.*;
+
+public class Chromosome implements Comparable<Chromosome> {
 
     private int[][] genotype;
-    private List<Edge> path = null;
+    private int[][] segments;
     private final int height;
     private final int width;
-    private int segments = 0;
+    private int numSegments;
     private Random random;
 
-    public Chromosome(List<Edge> path, int height, int width, int segments) {
+    private double edgeValue;
+    private double connectivity;
+    private double deviation;
+    private int dominationCount;
+    private ArrayList<Chromosome> dominates;
+    private double crowdingDistance;
+
+    public Chromosome(List<Edge> path, int height, int width, int numSegments) {
         this.genotype = new int[height][width];
         this.height = height;
         this.width = width;
-        this.segments = segments;
+        this.numSegments = numSegments;
+        this.dominates = new ArrayList<>();
 
         initGenotype(path);
     }
@@ -30,35 +37,6 @@ public class Chromosome {
         this.random = new Random();
 
         crossover(c1, c2);
-    }
-
-    public int[][] getGenotype() {
-        return genotype;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getSegments() {
-        if (segments == 0) {
-            return calculateNumSegments();
-        } else {
-            return segments;
-        }
-    }
-
-    //TODO: Calculate current number of segments from genotype
-    public int calculateNumSegments() {
-        return 0;
-    }
-
-    public int getDirection(int x, int y) {
-        return genotype[y][x];
     }
 
     private void initGenotype(List<Edge> path) {
@@ -76,7 +54,7 @@ public class Chromosome {
         pq.addAll(path);
 
         // Remove the k longest edges
-        for (int i = 0; i < segments - 1; i++) {
+        for (int i = 0; i < numSegments - 1; i++) {
             Edge e = pq.remove();
             genotype[e.getFrom().getY()][e.getFrom().getX()] = 0;
         }
@@ -92,5 +70,155 @@ public class Chromosome {
                 }
             }
         }
+    }
+
+    public Vertex[][] createVertexGrid(Vertex[][] vertices) {
+        Segments segments = new Segments(genotype);
+
+        this.segments = segments.makeSegments();
+
+        numSegments = segments.getNumSegments();
+
+        Vertex[][] vertexGrid = new Vertex[height][width];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                vertexGrid[y][x] = new Vertex(vertices[y][x], this.segments);
+            }
+        }
+
+        return vertexGrid;
+    }
+
+    public void calculateObjectives(Vertex[][] vertices) {
+
+        Vertex[][] vertexGrid = createVertexGrid(vertices);
+
+        edgeValue = 0.0;
+        connectivity = 0.0;
+        deviation = 0.0;
+
+        int[] segmentCount = new int[numSegments];
+        int[][] rgbSum = new int[numSegments][3];
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+
+                Vertex current = vertexGrid[y][x];
+
+                if (current.getIsEdge()) {
+                    for (Direction d : Direction.values()) {
+
+                        if (0 <= x + d.getShiftX() && x + d.getShiftX() < width
+                                && 0 <= y + d.getShiftY() && y + d.getShiftY() < height) {
+
+                            Vertex neighbor = vertexGrid[y + d.getShiftY()][x + d.getShiftX()];
+
+                            if (neighbor.getSegment() != current.getSegment()) {
+                                edgeValue += Utils.getEuclideanDist(current.getRgb(), neighbor.getRgb());
+
+                                connectivity += 1.0 / d.getDirection();
+                            }
+
+                        }
+                    }
+                }
+
+                int segmentNum = current.getSegment();
+                int[] rgb = current.getRgb();
+
+                segmentCount[segmentNum-1]++;
+
+                for (int i = 0; i < 3; i++) {
+                    rgbSum[segmentNum-1][i] += rgb[i] * rgb[i];
+                }
+            }
+        }
+
+        double[][] segmentAverage = new double[numSegments][3];
+
+        for (int i = 0; i < numSegments; i++) {
+            for (int j = 0; j < 3; j++) {
+                segmentAverage[i][j] = Math.sqrt((float) rgbSum[i][j] / segmentCount[i]);
+            }
+        }
+
+        calculateDeviation(segmentAverage, vertexGrid);
+    }
+
+    public void calculateDeviation(double[][] segmentAverage, Vertex[][] vertices) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                Vertex current =  vertices[y][x];
+
+                int segmentNum = current.getSegment();
+
+                deviation += Utils.getEuclideanDist(current.getRgb(), segmentAverage[segmentNum-1]);
+
+            }
+        }
+    }
+
+    public int[][] getGenotype() {
+        return genotype;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getDirection(int x, int y) {
+        return genotype[y][x];
+    }
+
+    public int getDominationCount() {
+        return dominationCount;
+    }
+
+    public double getCrowdingDistance() {
+        return crowdingDistance;
+    }
+
+    public int getNumSegments() {
+        return numSegments;
+    }
+
+    public int[][] getSegments() {
+        return segments;
+    }
+
+    public double getEdgeValue() {
+        return edgeValue;
+    }
+
+    public double getConnectivity() {
+        return connectivity;
+    }
+
+    public double getDeviation() {
+        return deviation;
+    }
+
+    @Override
+    public int compareTo(Chromosome o) {
+        if (this.dominationCount < o.getDominationCount()) {
+            return 1;
+        }
+
+        if (this.dominationCount == o.getDominationCount()) {
+            if (this.crowdingDistance > o.getCrowdingDistance()) {
+                return 1;
+            }
+
+            if (this.crowdingDistance == o.getCrowdingDistance()) {
+                return 0;
+            }
+        }
+
+        return -1;
     }
 }

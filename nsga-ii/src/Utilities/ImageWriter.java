@@ -12,27 +12,24 @@ import java.io.IOException;
 
 public class ImageWriter {
 
-    public static void writeBWImage(Segments segments, Vertex[][] vertexGrid) throws IOException {
-        File solutionFile = new File(Parameters.COLOR_SOLUTION + segments.getNumSegments() + ".jpg");
-        File evaluationFile = new File(Parameters.EVALUATED_SOLUTION + segments.getNumSegments() + ".jpg");
+    public static void writeBWImage(Chromosome chromosome, Vertex[][] vertexGrid) throws IOException {
+        File solutionFile = new File(Parameters.COLOR_SOLUTION + chromosome.getNumSegments() + ".jpg");
+        File evaluationFile = new File(Parameters.EVALUATED_SOLUTION + chromosome.getNumSegments() + ".jpg");
 
-        int width = segments.getWidth();
-        int height = segments.getHeight();
+        Vertex[][] solution = chromosome.createVertexGrid(vertexGrid);
 
-        Vertex[][] solution = new Vertex[height][width];
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                solution[y][x] = new Vertex(vertexGrid[y][x], segments.getSegments());
-            }
-        }
+        int height = solution.length;
+        int width = solution[0].length;
 
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         Graphics2D graphics = img.createGraphics();
 
-        graphics.setPaint(Color.WHITE);
+        graphics.setPaint(Color.BLACK);
         graphics.fillRect(0,0, width, height);
+
+        graphics.setPaint(Color.WHITE);
+        graphics.fillRect(1,1, width-2, height-2);
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -41,6 +38,8 @@ public class ImageWriter {
                 }
             }
         }
+
+
 
         ImageIO.write(img, "jpg", solutionFile);
         ImageIO.write(img, "jpg", evaluationFile);
