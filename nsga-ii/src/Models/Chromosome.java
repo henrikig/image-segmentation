@@ -17,6 +17,7 @@ public class Chromosome implements Comparable<Chromosome> {
     private double connectivity;
     private double deviation;
     private int dominationCount;
+    private int rank;
     private ArrayList<Chromosome> dominates;
     private double crowdingDistance;
 
@@ -203,15 +204,57 @@ public class Chromosome implements Comparable<Chromosome> {
         return deviation;
     }
 
+
+    public void resetDomination() {
+        dominationCount = 0;
+        dominates.clear();
+    }
+
+    public void increaseDominationCount() {
+        dominationCount++;
+    }
+
+    public void decreaseDominationCount() {
+        dominationCount--;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    public boolean dominates(Chromosome o1) {
+        return edgeValue > o1.getEdgeValue() && connectivity < o1.getConnectivity() && deviation < o1.getDeviation();
+    }
+
+    public void addDominates(Chromosome o1) {
+        dominates.add(o1);
+    }
+
+    public ArrayList<Chromosome> getDominates() {
+        return dominates;
+    }
+
+    public void resetCrowdingDistance() {
+        crowdingDistance = 0;
+    }
+
+    public void incrementCrowdingDistance(double i) {
+        crowdingDistance += i;
+    }
+
     @Override
     public int compareTo(Chromosome o) {
-        if (this.dominationCount < o.getDominationCount()) {
-            return 1;
+        if (rank < o.getRank()) {
+            return -1;
         }
 
-        if (this.dominationCount == o.getDominationCount()) {
-            if (this.crowdingDistance > o.getCrowdingDistance()) {
-                return 1;
+        if (rank == o.getRank()) {
+            if (crowdingDistance > o.getCrowdingDistance()) {
+                return -1;
             }
 
             if (this.crowdingDistance == o.getCrowdingDistance()) {
@@ -219,6 +262,6 @@ public class Chromosome implements Comparable<Chromosome> {
             }
         }
 
-        return -1;
+        return 1;
     }
 }
