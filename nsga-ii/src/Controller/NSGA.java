@@ -41,7 +41,14 @@ public class NSGA {
 
         nonDominatedSort();
 
+        parents.addAll(population);
+
+        population.clear();
+
+        createOffspring();
+
         frontiers.forEach(this::calculateCrowdingDistance);
+
 
         for (int i = 0; i < Parameters.GENERATIONS; i++) {
 
@@ -62,6 +69,52 @@ public class NSGA {
 
             population.add(new Chromosome(path, height, width, numSegments));
         }
+    }
+
+    public void createOffspring() {
+        offspring.clear();
+
+        while (offspring.size() < Parameters.POPULATION_SIZE) {
+            Chromosome c1 = tournamentSelect();
+            Chromosome c2 = tournamentSelect();
+
+            Chromosome child1;
+            Chromosome child2;
+
+            if (Math.random() < Parameters.XOVER_PROB) {
+                child1 = new Chromosome(c1, c2);
+                child2 = new Chromosome(c2, c1);
+            } else {
+                child1 = new Chromosome(c1);
+                child2 = new Chromosome(c2);
+            }
+
+            offspring.add(child1);
+            offspring.add(child2);
+        }
+
+        for (Chromosome c : offspring) {
+            if (Math.random() < Parameters.MUTATION_PROB) {
+                c.mutate();
+            }
+        }
+    }
+
+    public Chromosome tournamentSelect() {
+        Chromosome c1 = parents.get(random.nextInt(parents.size()));
+        Chromosome c2 = parents.get(random.nextInt(parents.size()));
+
+        if (c1.compareTo(c2) < 0) {
+
+            return c1;
+
+        } else if (c1.compareTo(c2) > 0) {
+
+            return c2;
+
+        }
+
+        return random.nextInt(2) == 0 ? c1 : c2;
     }
 
     public void nonDominatedSort() {

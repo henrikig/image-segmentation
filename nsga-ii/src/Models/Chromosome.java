@@ -7,19 +7,19 @@ import java.util.*;
 public class Chromosome implements Comparable<Chromosome> {
 
     private int[][] genotype;
-    private int[][] segments;
+    private transient int[][] segments;
     private final int height;
     private final int width;
-    private int numSegments;
-    private Random random;
+    private transient int numSegments;
+    private transient Random random;
 
-    private double edgeValue;
-    private double connectivity;
-    private double deviation;
-    private int dominationCount;
-    private int rank;
+    private transient double edgeValue;
+    private transient double connectivity;
+    private transient double deviation;
+    private transient int dominationCount;
+    private transient int rank;
     private ArrayList<Chromosome> dominates;
-    private double crowdingDistance;
+    private transient double crowdingDistance;
 
     public Chromosome(List<Edge> path, int height, int width, int numSegments) {
         this.genotype = new int[height][width];
@@ -29,6 +29,19 @@ public class Chromosome implements Comparable<Chromosome> {
         this.dominates = new ArrayList<>();
 
         initGenotype(path);
+    }
+
+    public Chromosome(Chromosome c) {
+        this.height = c.getHeight();
+        this.width = c.getWidth();
+        this.dominates = new ArrayList<>();
+        this.genotype = new int[height][width];
+
+        int[][] oldGenotype = c.getGenotype();
+
+        for (int i = 0; i < oldGenotype.length; i++) {
+            System.arraycopy(oldGenotype[i], 0, this.genotype[i], 0, this.width);
+        }
     }
 
     public Chromosome(Chromosome c1, Chromosome c2) {
@@ -158,6 +171,10 @@ public class Chromosome implements Comparable<Chromosome> {
 
             }
         }
+    }
+
+    public void mutate() {
+
     }
 
     public int[][] getGenotype() {
