@@ -1,5 +1,6 @@
 package Models;
 
+import Utilities.Parameters;
 import Utilities.Utils;
 
 import java.util.*;
@@ -11,7 +12,7 @@ public class Chromosome implements Comparable<Chromosome> {
     private final int height;
     private final int width;
     private transient int numSegments;
-    private transient Random random;
+    private final transient Random random = new Random();
 
     private transient double edgeValue;
     private transient double connectivity;
@@ -48,7 +49,7 @@ public class Chromosome implements Comparable<Chromosome> {
         this.height = c1.getHeight();
         this.width = c1.getWidth();
         this.genotype = new int[height][width];
-        this.random = new Random();
+        this.dominates = new ArrayList<>();
 
         crossover(c1, c2);
     }
@@ -141,6 +142,10 @@ public class Chromosome implements Comparable<Chromosome> {
                 int segmentNum = current.getSegment();
                 int[] rgb = current.getRgb();
 
+                if (segmentNum-1 > segmentCount.length-1) {
+                    System.out.println("Hello");
+                }
+
                 segmentCount[segmentNum-1]++;
 
                 for (int i = 0; i < 3; i++) {
@@ -174,7 +179,17 @@ public class Chromosome implements Comparable<Chromosome> {
     }
 
     public void mutate() {
-
+        for (int[] row : genotype) {
+            for (int i = 0; i < row.length; i++) {
+                if (Math.random() < Parameters.MUTATION_PROB) {
+                    try {
+                        row[i] = random.nextInt(9);
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
     public int[][] getGenotype() {

@@ -25,7 +25,7 @@ public class Segments {
     }
 
     public int getNumSegments() {
-        return numSegments;
+        return numSegments+1;
     }
 
     public int getHeight() {

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class NSGA {
 
@@ -33,7 +34,7 @@ public class NSGA {
         this.width = vertexGrid[0].length;
     }
 
-    public void main() {
+    public void main() throws IOException {
 
         initPopulation();
 
@@ -47,13 +48,59 @@ public class NSGA {
 
         createOffspring();
 
-        frontiers.forEach(this::calculateCrowdingDistance);
-
 
         for (int i = 0; i < Parameters.GENERATIONS; i++) {
 
-            System.out.println("Main loop");
+            System.out.println(String.format("----------Generation %d----------", i));
+
+            // Merge parents and offspring
+            updatePopulation();
+
+            // Calculate the objective values for each chromosome
+            population.forEach(o -> o.calculateObjectives(vertexGrid));
+
+            // Perform a non-dominated sort on the population to create frontiers
+            nonDominatedSort();
+
+            // P_(t+1) = Ø
+            resetParents();
+
+            // Index for iterating frontiers
+            int j = 0;
+
+            while (parents.size() + frontiers.get(j).size() < Parameters.POPULATION_SIZE) {
+                // Calculate the crowding distance for each frontier which proceeds to the next population
+                calculateCrowdingDistance(frontiers.get(j));
+
+                // Add the frontier to the next population
+                parents.addAll(frontiers.get(j));
+
+                // Increment frontier index
+                j++;
+            }
+
+            calculateCrowdingDistance(frontiers.get(j));
+
+            Collections.sort(frontiers.get(j));
+
+            int remaining = Parameters.POPULATION_SIZE - parents.size();
+
+            parents.addAll(
+                    frontiers.get(j)
+                    .stream()
+                    .limit(remaining)
+                    .collect(Collectors.toList())
+            );
+
+            createOffspring();
         }
+
+        Collections.sort(parents);
+
+        ImageWriter.writeBWImage(parents.get(0), vertexGrid);
+        ImageWriter.writeBWImage(parents.get(5), vertexGrid);
+        ImageWriter.writeBWImage(parents.get(10), vertexGrid);
+        ImageWriter.writeBWImage(parents.get(15), vertexGrid);
     }
 
     public Vertex[][] initVertexGrid() throws IOException {
@@ -82,22 +129,26 @@ public class NSGA {
             Chromosome child2;
 
             if (Math.random() < Parameters.XOVER_PROB) {
+
                 child1 = new Chromosome(c1, c2);
                 child2 = new Chromosome(c2, c1);
+
             } else {
+
                 child1 = new Chromosome(c1);
                 child2 = new Chromosome(c2);
+
             }
 
             offspring.add(child1);
             offspring.add(child2);
         }
 
-        for (Chromosome c : offspring) {
-            if (Math.random() < Parameters.MUTATION_PROB) {
-                c.mutate();
+        offspring.forEach(o -> {
+            if (Math.random() < Parameters.MUTATE_CHROMOSOME) {
+                o.mutate();
             }
-        }
+        });
     }
 
     public Chromosome tournamentSelect() {
@@ -115,6 +166,17 @@ public class NSGA {
         }
 
         return random.nextInt(2) == 0 ? c1 : c2;
+    }
+
+    public void updatePopulation() {
+        population.clear();
+
+        population.addAll(parents);
+        population.addAll(offspring);
+    }
+
+    public void resetParents() {
+        parents.clear();
     }
 
     public void nonDominatedSort() {
