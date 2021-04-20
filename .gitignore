@@ -163,3 +163,5 @@ cython_debug/
 
 .DS_Store
 .idea
+solution_images/
+Student_Segmentation_Files/

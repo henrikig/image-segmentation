@@ -48,10 +48,11 @@ public class NSGA {
 
         createOffspring();
 
+        addShutdownHook();
 
         for (int i = 0; i < Parameters.GENERATIONS; i++) {
 
-            System.out.println(String.format("----------Generation %d----------", i));
+            System.out.printf("----------Generation %d----------%n", i);
 
             // Merge parents and offspring
             updatePopulation();
@@ -95,12 +96,6 @@ public class NSGA {
             createOffspring();
         }
 
-        Collections.sort(parents);
-
-        ImageWriter.writeBWImage(parents.get(0), vertexGrid);
-        ImageWriter.writeBWImage(parents.get(5), vertexGrid);
-        ImageWriter.writeBWImage(parents.get(10), vertexGrid);
-        ImageWriter.writeBWImage(parents.get(15), vertexGrid);
     }
 
     public Vertex[][] initVertexGrid() throws IOException {
@@ -278,6 +273,25 @@ public class NSGA {
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+
+    public void createFinalImages() throws IOException {
+
+        frontiers.get(0).sort(Collections.reverseOrder());
+        for (Chromosome c : frontiers.get(0)) {
+            ImageWriter.writeBWImage(c, vertexGrid);
+            ImageWriter.writeColorImage(c, vertexGrid);
+        }
+    }
+
+    public void addShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                createFinalImages();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }));
     }
 
 }

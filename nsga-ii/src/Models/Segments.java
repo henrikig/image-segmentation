@@ -1,5 +1,7 @@
 package Models;
 
+import Utilities.Utils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,19 +65,24 @@ public class Segments {
 
             Direction d = Direction.getDirection(genotype[y][x]);
 
-            int neighborX = x + d.getShiftX();
-            int neighborY = y + d.getShiftY();
+            if (Utils.checkDirection(d, x, y, height, width)) {
 
-            if (segments[neighborY][neighborX] == 0) {
-                segments[neighborY][neighborX] = numSegments;
-                neighborhood.add(Arrays.asList(neighborX, neighborY));
+                int neighborX = x + d.getShiftX();
+                int neighborY = y + d.getShiftY();
 
-                numberNeighbor(neighborX, neighborY, neighborhood);
-            } else {
-                int neighborSegment = segments[neighborY][neighborX];
+                if (segments[neighborY][neighborX] == 0) {
+                    segments[neighborY][neighborX] = numSegments;
+                    neighborhood.add(Arrays.asList(neighborX, neighborY));
 
-                neighborhood.forEach(o -> segments[o.get(1)][o.get(0)] = neighborSegment);
-                numSegments -= 1;
+                    numberNeighbor(neighborX, neighborY, neighborhood);
+
+                } else {
+                    int neighborSegment = segments[neighborY][neighborX];
+
+                    neighborhood.forEach(o -> segments[o.get(1)][o.get(0)] = neighborSegment);
+                    numSegments -= 1;
+                }
+
             }
         }
     }

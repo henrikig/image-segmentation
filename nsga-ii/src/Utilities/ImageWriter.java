@@ -13,7 +13,7 @@ import java.io.IOException;
 public class ImageWriter {
 
     public static void writeBWImage(Chromosome chromosome, Vertex[][] vertexGrid) throws IOException {
-        File solutionFile = new File(Parameters.COLOR_SOLUTION + chromosome.getNumSegments() + ".jpg");
+        File solutionFile = new File(Parameters.BW_SOLUTION + chromosome.getNumSegments() + ".jpg");
         File evaluationFile = new File(Parameters.EVALUATED_SOLUTION + chromosome.getNumSegments() + ".jpg");
 
         Vertex[][] solution = chromosome.createVertexGrid(vertexGrid);
@@ -41,29 +41,46 @@ public class ImageWriter {
 
 
 
-        ImageIO.write(img, "jpg", solutionFile);
+        //ImageIO.write(img, "jpg", solutionFile);
         ImageIO.write(img, "jpg", evaluationFile);
         System.out.println("Image saved.");
     }
 
-    public static void writeColorImage(Chromosome solution) throws IOException {
-        File f = new File(Parameters.BW_SOLUTION + solution.getSegments() + ".jpg");
+    public static void writeColorImage(Chromosome chromosome, Vertex[][] vertexGrid) throws IOException {
+        File solutionFile = new File(Parameters.COLOR_SOLUTION + chromosome.getNumSegments() + ".jpg");
+
+        Vertex[][] solution = chromosome.createVertexGrid(vertexGrid);
+
+        int height = solution.length;
+        int width = solution[0].length;
 
         BufferedImage img = ImageIO.read(new File(Parameters.TEST_IMAGE));
 
-        int width = img.getWidth();
-        int height = img.getHeight();
+        for (int x = 0; x < width; x++) {
+            img.setRGB(x, 0, Color.GREEN.getRGB());
+        }
 
-        //TODO: Draw actual segments
+        for (int x = 0; x < width; x++) {
+            img.setRGB(x, height-1, Color.GREEN.getRGB());
+        }
+
+        for (int y = 0; y < height; y++) {
+            img.setRGB(0, y, Color.GREEN.getRGB());
+        }
+
+        for (int y = 0; y < height; y++) {
+            img.setRGB(width-1, y, Color.GREEN.getRGB());
+        }
+
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (solution.getDirection(x,y) == 3) {
+                if (solution[y][x].getIsEdge()) {
                     img.setRGB(x, y, Color.GREEN.getRGB());
                 }
             }
         }
 
-        ImageIO.write(img, "jpg", f);
+        ImageIO.write(img, "jpg", solutionFile);
         System.out.println("Image saved.");
     }
 }

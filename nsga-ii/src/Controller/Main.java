@@ -18,5 +18,6 @@ public class Main {
         NSGA nsga = new NSGA();
 
         nsga.main();
+
     }
 }

@@ -68,15 +68,15 @@ public class Chromosome implements Comparable<Chromosome> {
         PriorityQueue<Edge> pq = new PriorityQueue<>(Collections.reverseOrder());
         pq.addAll(path);
 
-        // Remove the k longest edges
+        /*// Remove the k longest edges
         for (int i = 0; i < numSegments - 1; i++) {
             Edge e = pq.remove();
             genotype[e.getFrom().getY()][e.getFrom().getX()] = 0;
-        }
+        }*/
     }
 
     private void crossover(Chromosome c1, Chromosome c2) {
-        for (int y = 0; y < height; y++) {
+        /*for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (random.nextInt(2) == 0) {
                     genotype[y][x] = c1.getDirection(x, y);
@@ -84,7 +84,30 @@ public class Chromosome implements Comparable<Chromosome> {
                     genotype[y][x] = c2.getDirection(x, y);
                 }
             }
+        }*/
+
+        int yCut = random.nextInt(height);
+        int xCut = random.nextInt(width);
+
+        int[][] g1 = c1.getGenotype();
+        int[][] g2 = c2.getGenotype();
+
+        for (int y = 0; y < yCut; y++) {
+            System.arraycopy(g1[y], 0, genotype[y], 0, width);
         }
+
+        for (int y = yCut + 1; y < height; y++){
+            System.arraycopy(g2[y], 0, genotype[y], 0, width);
+        }
+
+        for (int x = 0; x < width; x++) {
+            if (x <= xCut) {
+                genotype[yCut][x] = g1[yCut][x];
+            } else {
+                genotype[yCut][x] = g2[yCut][x];
+            }
+        }
+
     }
 
     public Vertex[][] createVertexGrid(Vertex[][] vertices) {
@@ -124,8 +147,7 @@ public class Chromosome implements Comparable<Chromosome> {
                 if (current.getIsEdge()) {
                     for (Direction d : Direction.values()) {
 
-                        if (0 <= x + d.getShiftX() && x + d.getShiftX() < width
-                                && 0 <= y + d.getShiftY() && y + d.getShiftY() < height) {
+                        if (Utils.checkDirection(d, x, y, height, width)) {
 
                             Vertex neighbor = vertexGrid[y + d.getShiftY()][x + d.getShiftX()];
 
@@ -182,11 +204,7 @@ public class Chromosome implements Comparable<Chromosome> {
         for (int[] row : genotype) {
             for (int i = 0; i < row.length; i++) {
                 if (Math.random() < Parameters.MUTATION_PROB) {
-                    try {
-                        row[i] = random.nextInt(9);
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    }
+                    row[i] = random.nextInt(9);
                 }
             }
         }

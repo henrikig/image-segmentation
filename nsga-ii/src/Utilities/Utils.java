@@ -1,5 +1,8 @@
 package Utilities;
 
+import Models.Direction;
+import Models.Vertex;
+
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
@@ -21,5 +24,9 @@ public class Utils {
 
 
         return sqrt(pow(rDist, 2) + pow(gDist, 2) + pow(bDist, 2));
+    }
+
+    public static boolean checkDirection(Direction d, int x, int y, int height, int width) {
+        return 0 <= x + d.getShiftX() && x + d.getShiftX() < width && 0 <= y + d.getShiftY() && y + d.getShiftY() < height;
     }
 }

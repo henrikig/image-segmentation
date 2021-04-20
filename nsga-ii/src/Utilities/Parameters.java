@@ -3,8 +3,9 @@ package Utilities;
 public class Parameters {
 
     public final static String P1 = "86016";
-    public final static String P2 = "custom";
-    public final static String P3 = "c2";
+    public final static String P2 = "c2";
+    public final static String P3 = "custom";
+    public final static String P4 = "rgb";
     public final static String CURRENT_IMAGE = P1;
     public final static String TEST_IMAGE = "./training_images/" + CURRENT_IMAGE + "/Test image.jpg";
     public final static String EVALUATED_SOLUTION = "../evaluator/Student_Segmentation_Files/" + CURRENT_IMAGE + "-";
@@ -14,9 +15,9 @@ public class Parameters {
     public final static int MIN_SEGMENTS = 10;
     public final static int MAX_SEGMENTS = 50;
 
-    public final static int POPULATION_SIZE = 20;
-    public final static int GENERATIONS = 100;
+    public final static int POPULATION_SIZE = 40;
+    public final static int GENERATIONS = 250;
     public final static double MUTATE_CHROMOSOME = 0.2;
     public final static double MUTATION_PROB = 0.0001;
-    public final static double XOVER_PROB = 0.7;
+    public final static double XOVER_PROB = 0.9;
 }
