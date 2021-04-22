@@ -22,11 +22,10 @@ public class Chromosome implements Comparable<Chromosome> {
     private ArrayList<Chromosome> dominates;
     private transient double crowdingDistance;
 
-    public Chromosome(List<Edge> path, int height, int width, int numSegments) {
+    public Chromosome(List<Edge> path, int height, int width) {
         this.genotype = new int[height][width];
         this.height = height;
         this.width = width;
-        this.numSegments = numSegments;
         this.dominates = new ArrayList<>();
 
         initGenotype(path);
@@ -68,23 +67,9 @@ public class Chromosome implements Comparable<Chromosome> {
         PriorityQueue<Edge> pq = new PriorityQueue<>(Collections.reverseOrder());
         pq.addAll(path);
 
-        /*// Remove the k longest edges
-        for (int i = 0; i < numSegments - 1; i++) {
-            Edge e = pq.remove();
-            genotype[e.getFrom().getY()][e.getFrom().getX()] = 0;
-        }*/
     }
 
     private void crossover(Chromosome c1, Chromosome c2) {
-        /*for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if (random.nextInt(2) == 0) {
-                    genotype[y][x] = c1.getDirection(x, y);
-                } else {
-                    genotype[y][x] = c2.getDirection(x, y);
-                }
-            }
-        }*/
 
         int yCut = random.nextInt(height);
         int xCut = random.nextInt(width);

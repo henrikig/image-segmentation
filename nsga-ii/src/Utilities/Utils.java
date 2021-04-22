@@ -1,7 +1,14 @@
 package Utilities;
 
 import Models.Direction;
-import Models.Vertex;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.util.List;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
@@ -28,5 +35,35 @@ public class Utils {
 
     public static boolean checkDirection(Direction d, int x, int y, int height, int width) {
         return 0 <= x + d.getShiftX() && x + d.getShiftX() < width && 0 <= y + d.getShiftY() && y + d.getShiftY() < height;
+    }
+
+    public static void cleanUpDirectories() {
+
+        File solDir = new File(Parameters.SOLUTION_FOLDER);
+        File evalDir = new File(Parameters.EVALUATION_FOLDER);
+
+
+        try {
+            for (File f : solDir.listFiles()) {
+                if (!f.isDirectory()) {
+                    if (!f.delete()) {
+                        System.out.printf("Could not delete file %s", f.toString());
+                    }
+                }
+            }
+
+            for (File f : evalDir.listFiles()) {
+                if (!f.isDirectory()) {
+                    if (!f.delete()) {
+                        System.out.printf("Could not delete file %s", f.toString());
+                    }
+                }
+            }
+
+            System.out.println("Image directories cleared.\n");
+
+        } catch (NullPointerException e) {
+            System.out.println("Could not delete all files");
+        }
     }
 }

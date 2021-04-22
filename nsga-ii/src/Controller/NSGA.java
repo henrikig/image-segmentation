@@ -107,9 +107,8 @@ public class NSGA {
 
         for (int i = 0; i < Parameters.POPULATION_SIZE; i++) {
             List<Edge> path = prim.createMinimumSpanningTree();
-            int numSegments = Parameters.MIN_SEGMENTS + random.nextInt(Parameters.MAX_SEGMENTS - Parameters.MIN_SEGMENTS);
 
-            population.add(new Chromosome(path, height, width, numSegments));
+            population.add(new Chromosome(path, height, width));
         }
     }
 
@@ -277,11 +276,14 @@ public class NSGA {
 
     public void createFinalImages() throws IOException {
 
+        System.out.printf("There are %d images in the final Pareto optimal frontier\n", frontiers.get(0).size());
+
         frontiers.get(0).sort(Collections.reverseOrder());
         for (Chromosome c : frontiers.get(0)) {
             ImageWriter.writeBWImage(c, vertexGrid);
             ImageWriter.writeColorImage(c, vertexGrid);
         }
+        System.out.println("Images saved.");
     }
 
     public void addShutdownHook() {

@@ -9,12 +9,16 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImageWriter {
 
+    private static final AtomicInteger count = new AtomicInteger(0);
+
     public static void writeBWImage(Chromosome chromosome, Vertex[][] vertexGrid) throws IOException {
-        File solutionFile = new File(Parameters.BW_SOLUTION + chromosome.getNumSegments() + ".jpg");
-        File evaluationFile = new File(Parameters.EVALUATED_SOLUTION + chromosome.getNumSegments() + ".jpg");
+        int id = count.incrementAndGet();
+        File solutionFile = new File(Parameters.BW_SOLUTION + chromosome.getNumSegments() + "#" + id + ".jpg");
+        File evaluationFile = new File(Parameters.EVALUATED_SOLUTION + chromosome.getNumSegments() + "#" + id + ".jpg");
 
         Vertex[][] solution = chromosome.createVertexGrid(vertexGrid);
 
@@ -43,7 +47,6 @@ public class ImageWriter {
 
         //ImageIO.write(img, "jpg", solutionFile);
         ImageIO.write(img, "jpg", evaluationFile);
-        System.out.println("Image saved.");
     }
 
     public static void writeColorImage(Chromosome chromosome, Vertex[][] vertexGrid) throws IOException {
@@ -81,6 +84,5 @@ public class ImageWriter {
         }
 
         ImageIO.write(img, "jpg", solutionFile);
-        System.out.println("Image saved.");
     }
 }
