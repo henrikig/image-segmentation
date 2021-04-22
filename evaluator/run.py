@@ -5,7 +5,7 @@ import re
 
 path = os.path.dirname(os.path.abspath(__file__))
 
-optimalFolder = path + "/Optimal_Segmentation_Files"  # you may have to specify the complete path
+optimalFolder = path + "/Optimal_Segmentation_Files/"  # you may have to specify the complete path
 studentFolder = path + "/Student_Segmentation_Files"  # you may have to specify the complete path
 colorValueSlackRange = 40
 blackValueThreshold = 100  # colors below 100 is black
@@ -73,10 +73,13 @@ def compare_pics(studentPic, optimalSegmentPic):
 
 
 def main():
-    optimal_files = read_files_from_folder(optimalFolder)
+    image_name = input("Please specify image name: ")
+    optimal_files = read_files_from_folder(optimalFolder + image_name)
     student_files = read_files_from_folder(studentFolder)
     total_score = 0
-    for student in student_files:
+    global_high = 0
+    global_high_idx = 0
+    for i, student in enumerate(student_files):
         highest_score = 0
         for opt in optimal_files:
             result1 = compare_pics(opt, student)
@@ -87,9 +90,13 @@ def main():
             highest_score = max(highest_score, result)
         total_score += highest_score
         a = highest_score * 100
-        print("Score: %.2f" % a + "%")
+        global_high = max(a, global_high)
+        global_high_idx = i + 1 if global_high == a else global_high_idx
+        print(f'{i+1}: Score: {a:.2f}%')
     a = total_score / len(student_files) * 100
+    print()
     print("Total Average Score: %.2f" % a + "%")
+    print(f'The best image is #{global_high_idx} with score {global_high:.2f}%')
 
 
 main()

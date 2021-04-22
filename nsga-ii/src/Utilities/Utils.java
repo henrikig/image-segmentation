@@ -2,7 +2,9 @@ package Utilities;
 
 import Models.Direction;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.Files;
@@ -65,5 +67,13 @@ public class Utils {
         } catch (NullPointerException e) {
             System.out.println("Could not delete all files");
         }
+    }
+
+    public static void writeSolution(String solution) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(Parameters.TXT_SOLUTION));
+
+        writer.write(solution);
+
+        writer.close();
     }
 }

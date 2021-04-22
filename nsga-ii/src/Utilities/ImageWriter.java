@@ -1,7 +1,6 @@
 package Utilities;
 
 import Models.Chromosome;
-import Models.Segments;
 import Models.Vertex;
 
 import javax.imageio.ImageIO;
@@ -9,6 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Formatter;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ImageWriter {
@@ -16,9 +16,16 @@ public class ImageWriter {
     private static final AtomicInteger count = new AtomicInteger(0);
 
     public static void writeBWImage(Chromosome chromosome, Vertex[][] vertexGrid) throws IOException {
-        int id = count.incrementAndGet();
-        File solutionFile = new File(Parameters.BW_SOLUTION + chromosome.getNumSegments() + "#" + id + ".jpg");
-        File evaluationFile = new File(Parameters.EVALUATED_SOLUTION + chromosome.getNumSegments() + "#" + id + ".jpg");
+
+        String imageName = new Formatter().format(
+                "%s%d_%s_segments_%d.jpg",
+                Parameters.EVALUATION_FOLDER,
+                count.incrementAndGet(),
+                Parameters.CURRENT_IMAGE,
+                chromosome.getNumSegments()
+        ).toString();
+
+        File evaluationFile = new File(imageName);
 
         Vertex[][] solution = chromosome.createVertexGrid(vertexGrid);
 
@@ -50,7 +57,16 @@ public class ImageWriter {
     }
 
     public static void writeColorImage(Chromosome chromosome, Vertex[][] vertexGrid) throws IOException {
-        File solutionFile = new File(Parameters.COLOR_SOLUTION + chromosome.getNumSegments() + ".jpg");
+
+        String imageName = new Formatter().format(
+                "%s%d_%s_segments_%d.jpg",
+                Parameters.SOLUTION_FOLDER,
+                count.get(),
+                Parameters.CURRENT_IMAGE,
+                chromosome.getNumSegments()
+        ).toString();
+
+        File solutionFile = new File(imageName);
 
         Vertex[][] solution = chromosome.createVertexGrid(vertexGrid);
 

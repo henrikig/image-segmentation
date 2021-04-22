@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class NSGA {
 
@@ -50,7 +51,7 @@ public class NSGA {
 
         addShutdownHook();
 
-        for (int i = 0; i < Parameters.GENERATIONS; i++) {
+        for (int i = 1; i <= Parameters.GENERATIONS; i++) {
 
             System.out.printf("----------Generation %d----------%n", i);
 
@@ -279,10 +280,22 @@ public class NSGA {
         System.out.printf("There are %d images in the final Pareto optimal frontier\n", frontiers.get(0).size());
 
         frontiers.get(0).sort(Collections.reverseOrder());
+
+        StringBuilder solution = new StringBuilder("Edge Value - Connectivity - Deviation - Segments\n");
+        Formatter fmt;
+
         for (Chromosome c : frontiers.get(0)) {
+            fmt = new Formatter();
+
+            solution.append(fmt.format("%.2f\t%.2f\t%.2f", c.getEdgeValue(), c.getConnectivity(), c.getDeviation())).append("\t");
+            solution.append(c.getNumSegments()).append("\n");
+
             ImageWriter.writeBWImage(c, vertexGrid);
             ImageWriter.writeColorImage(c, vertexGrid);
         }
+
+        Utils.writeSolution(solution.toString());
+
         System.out.println("Images saved.");
     }
 
