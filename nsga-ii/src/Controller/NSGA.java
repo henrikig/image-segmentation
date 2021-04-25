@@ -9,9 +9,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-public class NSGA {
+public class NSGA implements GeneralSolver {
 
     private final Vertex[][] vertexGrid;
     private final Random random;

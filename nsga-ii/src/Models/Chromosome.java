@@ -22,6 +22,10 @@ public class Chromosome implements Comparable<Chromosome> {
     private ArrayList<Chromosome> dominates;
     private transient double crowdingDistance;
 
+    private transient double maxEdgeValue;
+    private transient double maxConnectivity;
+    private transient double maxDeviation;
+
     public Chromosome(List<Edge> path, int height, int width) {
         this.genotype = new int[height][width];
         this.height = height;
@@ -239,10 +243,21 @@ public class Chromosome implements Comparable<Chromosome> {
         return deviation;
     }
 
-
     public void resetDomination() {
         dominationCount = 0;
         dominates.clear();
+    }
+
+    public void setMaxValues(double ev, double conn, double dev) {
+        maxEdgeValue = ev;
+        maxConnectivity = conn;
+        maxDeviation = dev;
+    }
+
+    public double getWeightedSum() {
+        return Parameters.W1 * deviation / maxDeviation
+                + Parameters.W2 * connectivity / maxConnectivity
+                - Parameters.W3 * edgeValue / maxEdgeValue;
     }
 
     public void increaseDominationCount() {

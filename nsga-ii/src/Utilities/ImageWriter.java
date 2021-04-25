@@ -50,9 +50,6 @@ public class ImageWriter {
             }
         }
 
-
-
-        //ImageIO.write(img, "jpg", solutionFile);
         ImageIO.write(img, "jpg", evaluationFile);
     }
 

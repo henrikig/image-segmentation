@@ -70,7 +70,15 @@ public class Utils {
     }
 
     public static void writeSolution(String solution) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(Parameters.TXT_SOLUTION));
+        File file = new File(Parameters.TXT_SOLUTION);
+
+        file.getParentFile().mkdirs();
+
+        if (file.createNewFile()) {
+            System.out.println("Created a new file for textual representation of solution.");
+        }
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 
         writer.write(solution);
 

@@ -1,15 +1,9 @@
 package Controller;
 
-import Models.Chromosome;
-import Utilities.ImageWriter;
+import Utilities.Parameters;
 import Utilities.Utils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class Main {
@@ -18,9 +12,19 @@ public class Main {
 
         Utils.cleanUpDirectories();
 
-        NSGA nsga = new NSGA();
+        GeneralSolver solver;
 
-        nsga.main();
+        if (Parameters.MOEA) {
+
+            solver = new NSGA();
+
+        } else {
+
+            solver = new GA();
+
+        }
+
+        solver.main();
 
     }
 }
